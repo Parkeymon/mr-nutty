@@ -1,0 +1,15 @@
+{
+  "name": "mr-nutty",
+  "version": "1.0.0",
+  "description": "mr nutty bot for nut inc",
+  "main": "index.js",
+  "dependencies": {
+    "discord.js": "^12.5.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Parkeymon",
+  "license": "MIT"
+}
