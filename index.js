@@ -1,6 +1,7 @@
 const config = require('./config.json');
+const Discord = require('discord.js');
 const { Client, MessageEmbed } = require('discord.js');
-const client = new Client({ partials: ['MESSAGE', 'REACTION']});
+const client = new Discord.Client({ partials: ['MESSAGE', 'REACTION']});
 const fs = require('fs');
 const prefix = config.BotPrefix;
 client.commands = new Discord.Collection();
@@ -51,10 +52,9 @@ client.on('messageReactionAdd', async (reaction, user) => {
         } else {
             const embed1 = new MessageEmbed()
             .setAuthor(reaction.message.author.tag, reaction.message.author.displayAvatarURL())
-            .setTitle('Jump')
-            .setURL(reaction.message.url)
-            .setDescription(reaction.message.content)
-            .setFooter(reaction.message.id + ' - ' + new Date(reaction.message.createdTimestamp));
+            .setDescription(`<#${reaction.message.channel.id}> — [Jump](${reaction.message.url})`)
+            .addFields({name: '__Message__', value: `${reaction.message.content}­`})
+            .setFooter(reaction.message.id + ' • ' + new Date(reaction.message.createdTimestamp).toLocaleDateString());
             
 
         if(starboard) {
