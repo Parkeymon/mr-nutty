@@ -1,12 +1,41 @@
 const config = require('./config.json');
 const { Client, MessageEmbed } = require('discord.js');
 const client = new Client({ partials: ['MESSAGE', 'REACTION']});
+const fs = require('fs');
+const prefix = config.BotPrefix;
+client.commands = new Discord.Collection();
 client.login(config.BotToken)
 
 client.on('ready', () => {
     console.log('Bot online...')
 });
 
+//Grab commands
+const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
+for(const file of commandFiles){
+    const command = require(`./commands/${file}`);
+
+    client.commands.set(command.name, command);
+}
+
+//Command handler.
+client.on('message', message => {
+    if(!message.content.startsWith(prefix) || message.author.bot) return;
+
+    const args = message.content.slice(prefix.length).split(/ +/);
+    const command = args.shift().trim().toLowerCase();
+
+    try{
+    const handler = client.commands.get(command);
+    if(handler) handler.execute(message, args, Discord, client, prefix);
+    }
+    catch(error){
+        console.error(error);
+        message.channel.send('An error occured.')
+    }
+});
+
+//Star Board
 client.on('messageReactionAdd', async (reaction, user) => {
     const handleStarboard = async () => {
         const starboard = client.channels.cache.get(config.starboardID);
