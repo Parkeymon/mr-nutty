@@ -1,2 +1,2 @@
-# mr-nutty
+# mr nutty
 The almighty nut
