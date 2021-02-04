@@ -3,5 +3,6 @@
     "BotPrefix": "!",
     "guildID": "734597352874049588",
     "starboardID": "760296090154827787",
-    "reactionEmoji": "⭐"
+    "reactionEmoji": "⭐",
+    "starsNeeded": "2"
 }

@@ -38,6 +38,7 @@ client.on('message', message => {
 
 //Star Board
 client.on('messageReactionAdd', async (reaction, user) => {
+
     const handleStarboard = async () => {
         const starboard = client.channels.cache.get(config.starboardID);
         const msgs = await starboard.messages.fetch({ limit: 100 });
@@ -48,14 +49,20 @@ client.on('messageReactionAdd', async (reaction, user) => {
             } return false;
         });
         if(existingMsg) {
-            existingMsg.edit(`${reaction.count} - ⭐`);
+            const embed1 = new MessageEmbed()
+                .setAuthor(reaction.message.author.tag, reaction.message.author.displayAvatarURL())
+                .setDescription(`<#${reaction.message.channel.id}> — [Jump](${reaction.message.url})`)
+                .addFields({name: '__Message__', value: `${reaction.message.content}­`})
+                .setFooter(reaction.message.id + ' • ' + new Date(reaction.message.createdTimestamp).toLocaleDateString() + ' • ' + `⭐ ${reaction.count} Stars` );
+
+                existingMsg.edit(embed1);
         } else {
             const embed1 = new MessageEmbed()
             .setAuthor(reaction.message.author.tag, reaction.message.author.displayAvatarURL())
             .setDescription(`<#${reaction.message.channel.id}> — [Jump](${reaction.message.url})`)
             .addFields({name: '__Message__', value: `${reaction.message.content}­`})
-            .setFooter(reaction.message.id + ' • ' + new Date(reaction.message.createdTimestamp).toLocaleDateString());
-            
+            .setFooter(reaction.message.id + ' • ' + new Date(reaction.message.createdTimestamp).toLocaleDateString() + ' • ' + `⭐ ${reaction.count} Stars`);
+            console.log('embedded');
 
         if(starboard) {
             starboard.send(embed1)
@@ -66,12 +73,14 @@ client.on('messageReactionAdd', async (reaction, user) => {
         if(reaction.message.channel === client.channels.cache.get(config.starboardID)) return;
 
         if(reaction.message.partial) {
-            await reaction.fetch();
-            await reaction.message.fetch();
-             handleStarboard();
+            if(reaction.count >= config.starsNeeded){
+                console.log('Message is a partial, fetching...');
+                await reaction.fetch();
+                await reaction.message.fetch();
+                handleStarboard();
+            }
 
-        } else {
-            console.log('bonk')
+        } else if (reaction.count >= config.starsNeeded){
             handleStarboard();
         } 
     }
@@ -87,9 +96,18 @@ client.on('messageReactionAdd', async (reaction, user) => {
             } return false;
         });
         if(existingMsg) {
-            if(reaction.count === 0){
+            if(reaction.count < config.starsNeeded){
                 existingMsg.delete({ timeout: 2500 });
-            } else existingMsg.edit(`${reaction.count} - ⭐`);
+            } else {
+                const embed1 = new MessageEmbed()
+                .setAuthor(reaction.message.author.tag, reaction.message.author.displayAvatarURL())
+                .setDescription(`<#${reaction.message.channel.id}> — [Jump](${reaction.message.url})`)
+                .addFields({name: '__Message__', value: `${reaction.message.content}­`})
+                .setFooter(reaction.message.id + ' • ' + new Date(reaction.message.createdTimestamp).toLocaleDateString() + ' • ' + `⭐ ${reaction.count} Stars` );
+
+                existingMsg.edit(embed1);
+            }
+            
         };
     }
     if(reaction.emoji.name === '⭐') {

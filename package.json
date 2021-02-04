@@ -4,7 +4,9 @@
   "description": "mr nutty bot for nut inc",
   "main": "index.js",
   "dependencies": {
-    "discord.js": "^12.5.1"
+    "discord.js": "^12.5.1",
+    "leeks": "0.0.1",
+    "leeks.js": "0.0.9"
   },
   "devDependencies": {},
   "scripts": {
