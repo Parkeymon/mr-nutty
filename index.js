@@ -65,7 +65,9 @@ client.on('messageReactionAdd', async (reaction, user) => {
             console.log('embedded');
 
         if(starboard) {
-            starboard.send(embed1)
+            if(reaction.count >= config.starsNeeded){
+                starboard.send(embed1);
+            }
           }
         }
     }
@@ -73,14 +75,12 @@ client.on('messageReactionAdd', async (reaction, user) => {
         if(reaction.message.channel === client.channels.cache.get(config.starboardID)) return;
 
         if(reaction.message.partial) {
-            if(reaction.count >= config.starsNeeded){
-                console.log('Message is a partial, fetching...');
-                await reaction.fetch();
-                await reaction.message.fetch();
-                handleStarboard();
-            }
+            console.log('Message is a partial, fetching...');
+            await reaction.fetch();
+            await reaction.message.fetch();
+            handleStarboard();
 
-        } else if (reaction.count >= config.starsNeeded){
+        } else {
             handleStarboard();
         } 
     }
