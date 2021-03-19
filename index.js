@@ -49,19 +49,35 @@ client.on('messageReactionAdd', async (reaction, user) => {
             } return false;
         });
         if(existingMsg) {
-            const embed1 = new MessageEmbed()
-                .setAuthor(reaction.message.author.tag, reaction.message.author.displayAvatarURL())
-                .setDescription(`<#${reaction.message.channel.id}> — [Jump](${reaction.message.url})`)
-                .addFields({name: '__Message__', value: `${reaction.message.content}­`})
-                .setFooter(reaction.message.id + ' • ' + new Date(reaction.message.createdTimestamp).toLocaleDateString() + ' • ' + `⭐ ${reaction.count} Stars` );
+            const messageAttachment = reaction.message.attachments.size > 0 ? reaction.message.attachments.array()[0].url : null
 
-                existingMsg.edit(embed1);
-        } else {
             const embed1 = new MessageEmbed()
             .setAuthor(reaction.message.author.tag, reaction.message.author.displayAvatarURL())
             .setDescription(`<#${reaction.message.channel.id}> — [Jump](${reaction.message.url})`)
-            .addFields({name: '__Message__', value: `${reaction.message.content}­`})
-            .setFooter(reaction.message.id + ' • ' + new Date(reaction.message.createdTimestamp).toLocaleDateString() + ' • ' + `⭐ ${reaction.count} Stars`);
+            if(reaction.message.embeds.video){
+                embed1.addFields({name: '__Message__', value: `${reaction.message.attachments.url}­`})
+            } else {
+                embed1.addFields({name: '__Message__', value: `${reaction.message.content}­`})
+            }
+            if (messageAttachment) embed1.setImage(messageAttachment)
+            .setFooter(reaction.message.id + ' • ' + new Date(reaction.message.createdTimestamp).toLocaleDateString() + ' • ' + `⭐ ${reaction.count} Stars` );
+
+                existingMsg.edit(embed1);
+        } else {
+            const messageAttachment = reaction.message.attachments.size > 0 ? reaction.message.attachments.array()[0].url : null
+
+            const embed1 = new MessageEmbed()
+            .setAuthor(reaction.message.author.tag, reaction.message.author.displayAvatarURL())
+            .setDescription(`<#${reaction.message.channel.id}> — [Jump](${reaction.message.url})`)
+            //Pretty sure the video checker doesnt work.
+            if(reaction.message.embeds.MessageEmbedVideo){
+                console.log('Sent embed with video attached.')
+                embed1.addFields({name: '__Message__', value: `${reaction.message.attachments.url}­`})
+            } else {
+                embed1.addFields({name: '__Message__', value: `${reaction.message.content}­`})
+            }
+            if(messageAttachment) embed1.setImage(messageAttachment)
+            embed1.setFooter(reaction.message.id + ' • ' + new Date(reaction.message.createdTimestamp).toLocaleDateString() + ' • ' + `⭐ ${reaction.count} Stars`);
             console.log('embedded');
 
         if(starboard) {
