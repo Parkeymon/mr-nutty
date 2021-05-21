@@ -44,7 +44,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
         const msgs = await starboard.messages.fetch({ limit: 100 });
         console.log('Fetched messages in starboard channel.');
         const existingMsg = msgs.find(msg =>{
-            if(msg.embeds.length === 1) {
+            if(msg.embeds.length === 1 && msg.embeds[0].footer) {
                 return msg.embeds[0].footer.text.startsWith(reaction.message.id) ? true : false;
             } return false;
         });
@@ -54,7 +54,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
             const embed1 = new MessageEmbed()
             .setAuthor(reaction.message.author.tag, reaction.message.author.displayAvatarURL())
             .setDescription(`<#${reaction.message.channel.id}> — [Jump](${reaction.message.url})`)
-            if(reaction.message.embeds.video){
+            if(reaction.message.embeds.MessageEmbedVideo){
                 embed1.addFields({name: '__Message__', value: `${reaction.message.attachments.url}­`})
             } else {
                 embed1.addFields({name: '__Message__', value: `${reaction.message.content}­`})
@@ -107,7 +107,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
         const starboard = client.channels.cache.get(config.starboardID);
         const msgs = await starboard.messages.fetch({ limit: 100 });
         const existingMsg = msgs.find(msg =>{
-            if(msg.embeds.length === 1) {
+            if(msg.embeds.length === 1 && msg.embeds[0].footer) {
                 return msg.embeds[0].footer.text.startsWith(reaction.message.id) ? true : false;
             } return false;
         });
