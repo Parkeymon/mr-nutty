@@ -32,7 +32,7 @@ client.on('message', message => {
     }
     catch(error){
         console.error(error);
-        message.channel.send('An error occured.')
+        message.channel.send('An error occurred.')
     }
 });
 
@@ -45,7 +45,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
         console.log('Fetched messages in starboard channel.');
         const existingMsg = msgs.find(msg =>{
             if(msg.embeds.length === 1 && msg.embeds[0].footer) {
-                return msg.embeds[0].footer.text.startsWith(reaction.message.id) ? true : false;
+                return msg.embeds[0].footer.text.startsWith(reaction.message.id);
             } return false;
         });
         if(existingMsg) {
@@ -54,13 +54,14 @@ client.on('messageReactionAdd', async (reaction, user) => {
             const embed1 = new MessageEmbed()
             .setAuthor(reaction.message.author.tag, reaction.message.author.displayAvatarURL())
             .setDescription(`<#${reaction.message.channel.id}> — [Jump](${reaction.message.url})`)
+            .setFooter(reaction.message.id + ' • ' + new Date(reaction.message.createdTimestamp).toLocaleDateString() + ' • ' + `⭐ ${reaction.count} Stars` );
             if(reaction.message.embeds.MessageEmbedVideo){
-                embed1.addFields({name: '__Message__', value: `${reaction.message.attachments.url}­`})
+                embed1.addFields({name: '__Message__', value: `${reaction.message.attachments.url}`})
             } else {
-                embed1.addFields({name: '__Message__', value: `${reaction.message.content}­`})
+                embed1.addFields({name: '__Message__', value: `${reaction.message.content}`})
             }
             if (messageAttachment) embed1.setImage(messageAttachment)
-            .setFooter(reaction.message.id + ' • ' + new Date(reaction.message.createdTimestamp).toLocaleDateString() + ' • ' + `⭐ ${reaction.count} Stars` );
+
 
                 existingMsg.edit(embed1);
         } else {
@@ -69,15 +70,15 @@ client.on('messageReactionAdd', async (reaction, user) => {
             const embed1 = new MessageEmbed()
             .setAuthor(reaction.message.author.tag, reaction.message.author.displayAvatarURL())
             .setDescription(`<#${reaction.message.channel.id}> — [Jump](${reaction.message.url})`)
+            .setFooter(reaction.message.id + ' • ' + new Date(reaction.message.createdTimestamp).toLocaleDateString() + ' • ' + `⭐ ${reaction.count} Stars`);
             //Pretty sure the video checker doesnt work.
             if(reaction.message.embeds.MessageEmbedVideo){
                 console.log('Sent embed with video attached.')
-                embed1.addFields({name: '__Message__', value: `${reaction.message.attachments.url}­`})
+                embed1.addFields({name: '__Message__', value: `${reaction.message.attachments.url}`})
             } else {
-                embed1.addFields({name: '__Message__', value: `${reaction.message.content}­`})
+                embed1.addFields({name: '__Message__', value: `${reaction.message.content}`})
             }
             if(messageAttachment) embed1.setImage(messageAttachment)
-            embed1.setFooter(reaction.message.id + ' • ' + new Date(reaction.message.createdTimestamp).toLocaleDateString() + ' • ' + `⭐ ${reaction.count} Stars`);
             console.log('embedded');
 
         if(starboard) {
@@ -94,10 +95,10 @@ client.on('messageReactionAdd', async (reaction, user) => {
             console.log('Message is a partial, fetching...');
             await reaction.fetch();
             await reaction.message.fetch();
-            handleStarboard();
+            await handleStarboard();
 
         } else {
-            handleStarboard();
+            await handleStarboard();
         } 
     }
   });
@@ -108,7 +109,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
         const msgs = await starboard.messages.fetch({ limit: 100 });
         const existingMsg = msgs.find(msg =>{
             if(msg.embeds.length === 1 && msg.embeds[0].footer) {
-                return msg.embeds[0].footer.text.startsWith(reaction.message.id) ? true : false;
+                return msg.embeds[0].footer.text.startsWith(reaction.message.id);
             } return false;
         });
         if(existingMsg) {
@@ -118,24 +119,24 @@ client.on('messageReactionAdd', async (reaction, user) => {
                 const embed1 = new MessageEmbed()
                 .setAuthor(reaction.message.author.tag, reaction.message.author.displayAvatarURL())
                 .setDescription(`<#${reaction.message.channel.id}> — [Jump](${reaction.message.url})`)
-                .addFields({name: '__Message__', value: `${reaction.message.content}­`})
+                .addFields({name: '__Message__', value: `${reaction.message.content}`})
                 .setFooter(reaction.message.id + ' • ' + new Date(reaction.message.createdTimestamp).toLocaleDateString() + ' • ' + `⭐ ${reaction.count} Stars` );
 
                 existingMsg.edit(embed1);
             }
             
-        };
+        }
     }
     if(reaction.emoji.name === '⭐') {
         if(reaction.message.channel === client.channels.cache.get(config.starboardID)) return;
         if(reaction.message.partial) {
             await reaction.fetch()
             await reaction.message.fetch();
-             handleStarboard();
+             await handleStarboard();
 
         } else {
             console.log('bonk')
-            handleStarboard();
+            await handleStarboard();
         } 
     }
   });
